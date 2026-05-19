@@ -1,24 +1,27 @@
 # SocialDataX OpenCLI Plugin | 社媒数据助手 OpenCLI 插件
 
-SocialDataX / 社媒数据助手 provides hosted, read-only social data tools for 小红书 / Xiaohongshu / XHS / RedNote and 抖音 / Douyin workflows.
+SocialDataX / 社媒数据助手 OpenCLI 插件提供 API Key 鉴权的 hosted read-only social data tools，用于小红书 / Xiaohongshu / XHS / RedNote 和抖音 / Douyin 的内容研究、社媒数据分析、选题观察、评论分析和创作者研究。
 
-Use this OpenCLI plugin when you want API Key based data access without relying on a logged-in browser session. It is a complement to OpenCLI's built-in browser-backed `xiaohongshu` adapter, not a replacement for that adapter.
+Use this plugin when you want API Key based data access without relying on a logged-in browser session. 适合用 OpenCLI 做小红书笔记搜索 / note search、笔记详情 / note details、评论 / comments、评论回复 / comment replies、博主信息 / creator profiles、博主笔记列表 / creator notes，以及抖音作品搜索 / Douyin work search、作品详情 / work details、评论 / comments、创作者资料 / creator profiles 和创作者作品列表 / creator posts.
+
+This is a complement to OpenCLI's built-in browser-backed `xiaohongshu` adapter, not a replacement for that adapter. OpenCLI 内置 `xiaohongshu` 更偏浏览器登录态能力；`socialdatax` 是 SocialDataX / 社媒数据助手 提供的 API Key hosted 只读数据能力，覆盖小红书 / Xiaohongshu / XHS / RedNote 和抖音 / Douyin。
 
 - Product: `SocialDataX` / `社媒数据助手`
 - Website: <https://socialdatax.com>
 - Platforms: 小红书 / Xiaohongshu / XHS / RedNote, 抖音 / Douyin
+- Capabilities: 笔记搜索 / note search, 笔记详情 / note details, 评论 / comments, 评论回复 / comment replies, 博主信息 / creator profiles, 博主内容列表 / creator posts
 - Runtime package: `socialdatax-skills@latest`
 - API key environment variable: `SOCIALDATAX_API_KEY`
 
-## Install
+## Install / 安装
 
-Install from GitHub:
+从 GitHub 安装 SocialDataX / 社媒数据助手 OpenCLI 插件：
 
 ```bash
 opencli plugin install github:DevinChen2014/opencli-plugin-socialdatax
 ```
 
-Or install from a local checkout for development:
+本地开发或调试时，也可以从 local checkout 安装：
 
 ```bash
 git clone https://github.com/DevinChen2014/opencli-plugin-socialdatax.git
@@ -28,13 +31,13 @@ opencli plugin install "$PWD"
 
 OpenCLI plugin install currently accepts file, GitHub, and git sources. It does not install plugins directly from an npm package name.
 
-Set your API Key before data calls:
+调用小红书 / Xiaohongshu / XHS / RedNote 或抖音 / Douyin 数据命令前，先设置 API Key：
 
 ```bash
 export SOCIALDATAX_API_KEY="<SOCIALDATAX_API_KEY>"
 ```
 
-## Commands
+## Commands / 命令
 
 ```bash
 opencli socialdatax xhs-search --keyword "露营桌" -f json
@@ -51,15 +54,15 @@ opencli socialdatax douyin-user-info --sec-user-id "<sec_user_id>" -f json
 opencli socialdatax douyin-user-posts --sec-user-id "<sec_user_id>" -f table
 ```
 
-Each command forwards to `npx -y socialdatax-skills@latest ...` and flattens returned JSON so OpenCLI can render table, JSON, YAML, or CSV output.
+Each command forwards to `npx -y socialdatax-skills@latest ...` and flattens returned JSON so OpenCLI can render table, JSON, YAML, or CSV output. 每个命令都会复用 `socialdatax-skills@latest`，把返回结果整理成 OpenCLI 适合展示的表格、JSON、YAML 或 CSV。
 
-## Read-Only Boundary
+## Read-Only Boundary / 只读边界
 
-This plugin only reads public content data through hosted SocialDataX services. It does not log in to user accounts, read browser data, publish posts, like, comment, follow, edit, delete, or perform account actions.
+This plugin only reads public content data through hosted SocialDataX services. 本插件只提供只读数据能力，不登录用户账号、不读取浏览器数据、不发布内容、不点赞、不评论、不关注、不编辑、不删除，也不执行任何账号动作。
 
-## Search Aliases
+## Search Aliases / 搜索关键词
 
-Users and agents may search for this plugin with:
+Users, agents, and search engines may discover this plugin with these Chinese and English aliases:
 
 - `SocialDataX`
 - `社媒数据助手`
@@ -72,8 +75,14 @@ Users and agents may search for this plugin with:
 - `social media data`
 - `creator analytics`
 - `comment analysis`
+- `笔记搜索`
+- `note search`
+- `评论分析`
+- `comments`
+- `创作者分析`
+- `creator profiles`
 
-## Maintainer Notes
+## Maintainer Notes / 维护说明
 
 Published package: `opencli-plugin-socialdatax`.
 
