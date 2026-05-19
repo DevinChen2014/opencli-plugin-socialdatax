@@ -1,0 +1,25 @@
+{
+  "name": "socialdatax",
+  "displayName": "SocialDataX / 社媒数据助手",
+  "description": "SocialDataX / 社媒数据助手 provides hosted read-only social data tools for 小红书 / Xiaohongshu / XHS / RedNote and 抖音 / Douyin: search content, read details, analyze comments, creator profiles, and creator posts.",
+  "version": "0.1.1",
+  "opencli": ">=1.0.0",
+  "homepage": "https://socialdatax.com",
+  "keywords": [
+    "SocialDataX",
+    "社媒数据助手",
+    "小红书",
+    "Xiaohongshu",
+    "XHS",
+    "RedNote",
+    "抖音",
+    "Douyin",
+    "social media data",
+    "content insights",
+    "creator analytics",
+    "comments"
+  ],
+  "commands": [
+    "socialdatax"
+  ]
+}

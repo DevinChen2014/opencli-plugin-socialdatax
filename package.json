@@ -1,0 +1,45 @@
+{
+  "name": "opencli-plugin-socialdatax",
+  "version": "0.1.1",
+  "description": "SocialDataX / 社媒数据助手 OpenCLI plugin for 小红书, Xiaohongshu, XHS, RedNote, 抖音, and Douyin read-only social data workflows.",
+  "license": "MIT",
+  "type": "module",
+  "files": [
+    "README.md",
+    "LICENSE",
+    "opencli-plugin.json",
+    "socialdatax.js",
+    "socialdatax.ts",
+    "lib/**",
+    "skills/**"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "keywords": [
+    "socialdatax",
+    "社媒数据助手",
+    "opencli",
+    "opencli-plugin",
+    "xiaohongshu",
+    "小红书",
+    "xhs",
+    "rednote",
+    "douyin",
+    "抖音",
+    "social-media",
+    "social-data",
+    "content-analysis",
+    "creator-analytics"
+  ],
+  "homepage": "https://socialdatax.com",
+  "bugs": {
+    "url": "https://socialdatax.com"
+  },
+  "engines": {
+    "node": ">=21.0.0"
+  },
+  "peerDependencies": {
+    "@jackwener/opencli": ">=1.0.0"
+  }
+}
