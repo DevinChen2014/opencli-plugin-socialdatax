@@ -2,14 +2,14 @@
 
 SocialDataX / 社媒数据助手 OpenCLI 插件提供 API Key 鉴权的 hosted read-only social data tools，用于小红书 / Xiaohongshu / XHS / RedNote 和抖音 / Douyin 的内容研究、社媒数据分析、选题观察、评论分析和创作者研究。
 
-Use this plugin when you want API Key based data access without relying on a logged-in browser session. 适合用 OpenCLI 做小红书笔记搜索 / note search、笔记详情 / note details、评论 / comments、评论回复 / comment replies、博主信息 / creator profiles、博主笔记列表 / creator notes，以及抖音作品搜索 / Douyin work search、作品详情 / work details、评论 / comments、创作者资料 / creator profiles 和创作者作品列表 / creator posts.
+Use this plugin when you want API Key based data access without relying on a logged-in browser session. 适合用 OpenCLI 做小红书笔记搜索 / note search、笔记详情 / note details、评论 / comments、评论回复 / comment replies、博主信息 / creator profiles、博主笔记列表 / creator notes，以及抖音热榜 / hot search、作品搜索 / Douyin work search、作品详情 / work details、评论 / comments、评论回复 / comment replies、创作者资料 / creator profiles、创作者作品列表 / creator posts 和创作者短剧列表 / creator short-drama series.
 
 This is a complement to OpenCLI's built-in browser-backed `xiaohongshu` adapter, not a replacement for that adapter. OpenCLI 内置 `xiaohongshu` 更偏浏览器登录态能力；`socialdatax` 是 SocialDataX / 社媒数据助手 提供的 API Key hosted 只读数据能力，覆盖小红书 / Xiaohongshu / XHS / RedNote 和抖音 / Douyin。
 
 - Product: `SocialDataX` / `社媒数据助手`
 - Website: <https://socialdatax.com>
 - Platforms: 小红书 / Xiaohongshu / XHS / RedNote, 抖音 / Douyin
-- Capabilities: 笔记搜索 / note search, 笔记详情 / note details, 评论 / comments, 评论回复 / comment replies, 博主信息 / creator profiles, 博主内容列表 / creator posts
+- Capabilities: 笔记搜索 / note search, 笔记详情 / note details, 评论 / comments, 评论回复 / comment replies, 博主信息 / creator profiles, 博主内容列表 / creator posts, 抖音热榜 / Douyin hot search, 创作者短剧列表 / creator short-drama series
 - Runtime package: `socialdatax-skills@latest`
 - API key environment variable: `SOCIALDATAX_API_KEY`
 
@@ -37,6 +37,14 @@ OpenCLI plugin install currently accepts file, GitHub, and git sources. It does 
 export SOCIALDATAX_API_KEY="<SOCIALDATAX_API_KEY>"
 ```
 
+## API Key / API Key 获取
+
+Request or manage API access from the official product website:
+
+<https://socialdatax.com>
+
+Use the key as `SOCIALDATAX_API_KEY` for OpenCLI data calls. Do not commit real API keys to code, docs, issues, or screenshots.
+
 ## Commands / 命令
 
 ```bash
@@ -47,11 +55,14 @@ opencli socialdatax xhs-sub-comments --note-id "<note_id>" --comment-id "<commen
 opencli socialdatax xhs-user-info --user-id "<user_id>" -f json
 opencli socialdatax xhs-user-posts --user-id "<user_id>" -f table
 
+opencli socialdatax douyin-hot-search -f table
 opencli socialdatax douyin-search --keyword "露营桌" -f json
 opencli socialdatax douyin-detail --aweme-id "<aweme_id>" -f json
 opencli socialdatax douyin-comments --aweme-id "<aweme_id>" -f table
+opencli socialdatax douyin-replies --aweme-id "<aweme_id>" --comment-id "<comment_id>" -f table
 opencli socialdatax douyin-user-info --sec-user-id "<sec_user_id>" -f json
 opencli socialdatax douyin-user-posts --sec-user-id "<sec_user_id>" -f table
+opencli socialdatax douyin-user-series --sec-user-id "<sec_user_id>" -f table
 ```
 
 Each command forwards to `npx -y socialdatax-skills@latest ...` and flattens returned JSON so OpenCLI can render table, JSON, YAML, or CSV output. 每个命令都会复用 `socialdatax-skills@latest`，把返回结果整理成 OpenCLI 适合展示的表格、JSON、YAML 或 CSV。
@@ -86,9 +97,15 @@ Users, agents, and search engines may discover this plugin with these Chinese an
 
 Published package: `opencli-plugin-socialdatax`.
 
-Current npm release: `0.1.1`, published on `2026-05-19 11:53:50` Asia/Shanghai.
+Current package version: `0.1.3`.
 
-Patch `0.1.1` ships a precompiled `socialdatax.js` entrypoint for OpenCLI environments without `esbuild`.
+Patch `0.1.3` exposes Douyin comment replies with `douyin-replies`.
+
+Patch `0.1.2` pins API Key guidance to <https://socialdatax.com> for agent-installed skill copies.
+
+Patch `0.1.2` also exposes Douyin hot search and creator short-drama series commands that are already available from the hosted Douyin MCP service.
+
+Patch `0.1.1` shipped a precompiled `socialdatax.js` entrypoint for OpenCLI environments without `esbuild`.
 
 Release from the repository root:
 

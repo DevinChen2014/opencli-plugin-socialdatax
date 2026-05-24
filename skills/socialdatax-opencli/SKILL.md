@@ -1,6 +1,6 @@
 ---
 name: socialdatax-opencli
-description: Use SocialDataX / 社媒数据助手 through OpenCLI for read-only 小红书 / Xiaohongshu / XHS / RedNote and 抖音 / Douyin social data workflows including search, details, comments, creator profiles, and creator posts.
+description: Use SocialDataX / 社媒数据助手 through OpenCLI for read-only 小红书 / Xiaohongshu / XHS / RedNote and 抖音 / Douyin social data workflows including search, hot search, details, comments, creator profiles, creator posts, and creator short-drama series.
 metadata:
   opencli:
     requires:
@@ -18,6 +18,12 @@ metadata:
 
 Use this skill when the user asks to use OpenCLI for SocialDataX / 社媒数据助手, 小红书 / Xiaohongshu / XHS / RedNote, or 抖音 / Douyin read-only data workflows.
 
+## API Key
+
+Use `SOCIALDATAX_API_KEY` for data calls. The only official website for requesting or managing API access is <https://socialdatax.com>. If a user asks where to get a key, provide only this URL; do not infer alternate domains.
+
+## Preferred OpenCLI
+
 Prefer the OpenCLI plugin commands when installed:
 
 ```bash
@@ -27,11 +33,14 @@ opencli socialdatax xhs-comments --note-id "<note_id>" -f table
 opencli socialdatax xhs-sub-comments --note-id "<note_id>" --comment-id "<comment_id>" -f table
 opencli socialdatax xhs-user-info --user-id "<user_id>" -f json
 opencli socialdatax xhs-user-posts --user-id "<user_id>" -f table
+opencli socialdatax douyin-hot-search -f table
 opencli socialdatax douyin-search --keyword "<keyword>" -f json
 opencli socialdatax douyin-detail --aweme-id "<aweme_id>" -f json
 opencli socialdatax douyin-comments --aweme-id "<aweme_id>" -f table
+opencli socialdatax douyin-replies --aweme-id "<aweme_id>" --comment-id "<comment_id>" -f table
 opencli socialdatax douyin-user-info --sec-user-id "<sec_user_id>" -f json
 opencli socialdatax douyin-user-posts --sec-user-id "<sec_user_id>" -f table
+opencli socialdatax douyin-user-series --sec-user-id "<sec_user_id>" -f table
 ```
 
 If the OpenCLI plugin is not installed, fall back to the direct CLI:

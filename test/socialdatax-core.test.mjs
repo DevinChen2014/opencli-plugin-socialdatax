@@ -62,6 +62,10 @@ test("xhs command arguments map to socialdatax-skills CLI", () => {
 
 test("douyin command arguments map to socialdatax-skills CLI", () => {
   assert.deepEqual(
+    buildSocialDataXArgs("douyin-hot-search", {}),
+    ["douyin", "hot-search"]
+  );
+  assert.deepEqual(
     buildSocialDataXArgs("douyin-search", {
       keyword: "露营桌",
       pageToken: "page-2",
@@ -93,6 +97,37 @@ test("douyin command arguments map to socialdatax-skills CLI", () => {
       "page-token": "next",
     }),
     ["douyin", "user-posts", "--sec-user-id", "sec-1", "--page-token", "next"]
+  );
+  assert.deepEqual(
+    buildSocialDataXArgs("douyin-replies", {
+      "aweme-id": "aweme-1",
+      "comment-id": "comment-1",
+      "page-token": "next",
+    }),
+    [
+      "douyin",
+      "replies",
+      "--aweme-id",
+      "aweme-1",
+      "--comment-id",
+      "comment-1",
+      "--page-token",
+      "next",
+    ]
+  );
+  assert.deepEqual(
+    buildSocialDataXArgs("douyin-user-series", {
+      "profile-url": "https://www.douyin.com/user/sec-1",
+      "page-token": "next",
+    }),
+    [
+      "douyin",
+      "user-series",
+      "--profile-url",
+      "https://www.douyin.com/user/sec-1",
+      "--page-token",
+      "next",
+    ]
   );
 });
 
@@ -160,6 +195,43 @@ test("list results are flattened with pagination metadata", () => {
         comment_count: 5,
         comment_id: "c1",
         author_nickname: "评论者",
+      },
+    ]
+  );
+  assert.deepEqual(
+    flattenSocialDataXEnvelope("douyin-replies", {
+      data: {
+        next_page_token: "reply-next",
+        comment_count: 2,
+        items: [{ comment_id: "reply-1", author: { nickname: "回复者" } }],
+      },
+    }),
+    [
+      {
+        next_page_token: "reply-next",
+        comment_count: 2,
+        comment_id: "reply-1",
+        author_nickname: "回复者",
+      },
+    ]
+  );
+  assert.deepEqual(
+    flattenSocialDataXEnvelope("douyin-hot-search", {
+      data: {
+        hot_items: [
+          {
+            rank: 1,
+            keyword: "热点",
+            tag: "社会",
+          },
+        ],
+      },
+    }),
+    [
+      {
+        rank: 1,
+        keyword: "热点",
+        tag: "社会",
       },
     ]
   );
@@ -239,6 +311,11 @@ test("metadata docs and skill contain bilingual search keywords", () => {
   ]) {
     assert.match(combined, new RegExp(keyword));
   }
+  assert.match(combined, /SOCIALDATAX_API_KEY/);
+  assert.match(combined, /https:\/\/socialdatax\.com/);
+  assert.match(combined, /douyin-replies/);
+  assert.match(combined, /do not infer alternate domains/);
+  assert.doesNotMatch(combined, /socialdata\.tools/);
 });
 
 test("package ships a precompiled OpenCLI JS entrypoint", () => {
@@ -250,11 +327,18 @@ test("package ships a precompiled OpenCLI JS entrypoint", () => {
   assert.match(entrypoint, /@jackwener\/opencli\/registry/);
   assert.match(entrypoint, /site: "socialdatax"/);
   assert.match(entrypoint, /xhs-search/);
+  assert.match(entrypoint, /douyin-hot-search/);
   assert.match(entrypoint, /douyin-search/);
+  assert.match(entrypoint, /douyin-replies/);
+  assert.match(entrypoint, /douyin-user-series/);
 });
 
 test("package and OpenCLI manifest versions stay in sync", () => {
   const packageJson = JSON.parse(readFileSync(join(packageDir, "package.json"), "utf8"));
   const manifest = JSON.parse(readFileSync(join(packageDir, "opencli-plugin.json"), "utf8"));
   assert.equal(manifest.version, packageJson.version);
+  assert.equal(packageJson.engines.node, ">=20.18.1");
+  assert.match(manifest.description, /Douyin hot search/);
+  assert.match(manifest.description, /comments\/replies/);
+  assert.match(manifest.description, /creator short-drama series/);
 });

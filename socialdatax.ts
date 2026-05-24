@@ -7,6 +7,9 @@ const COMMON_COLUMNS = [
   "aweme_id",
   "sec_user_id",
   "comment_id",
+  "rank",
+  "keyword",
+  "tag",
   "title",
   "desc",
   "content",
@@ -98,6 +101,10 @@ localCommand(
   ]
 );
 localCommand(
+  "douyin-hot-search",
+  "Fetch the current 抖音 / Douyin main hot search list.",
+);
+localCommand(
   "douyin-search",
   "Search 抖音 / Douyin works with SocialDataX / 社媒数据助手.",
   [
@@ -127,6 +134,15 @@ localCommand(
   ]
 );
 localCommand(
+  "douyin-replies",
+  "Fetch 抖音 / Douyin replies under one first-level comment.",
+  [
+    { name: "aweme-id", type: "string", required: true, help: "Known Douyin aweme_id." },
+    { name: "comment-id", type: "string", required: true, help: "First-level comment ID." },
+    pageTokenOption,
+  ]
+);
+localCommand(
   "douyin-user-info",
   "Read 抖音 / Douyin creator profile data.",
   [
@@ -137,6 +153,15 @@ localCommand(
 localCommand(
   "douyin-user-posts",
   "Fetch 抖音 / Douyin creator works.",
+  [
+    { name: "sec-user-id", type: "string", help: "Known Douyin sec_user_id." },
+    { name: "profile-url", type: "string", help: "Douyin profile URL, short link, or share text." },
+    pageTokenOption,
+  ]
+);
+localCommand(
+  "douyin-user-series",
+  "Fetch 抖音 / Douyin creator short-drama series.",
   [
     { name: "sec-user-id", type: "string", help: "Known Douyin sec_user_id." },
     { name: "profile-url", type: "string", help: "Douyin profile URL, short link, or share text." },
