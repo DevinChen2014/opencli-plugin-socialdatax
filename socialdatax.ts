@@ -10,6 +10,7 @@ const COMMON_COLUMNS = [
   "rank",
   "keyword",
   "tag",
+  "hot_value",
   "title",
   "desc",
   "content",
@@ -26,7 +27,7 @@ const COMMON_COLUMNS = [
 const pageTokenOption = {
   name: "page-token",
   type: "string",
-  help: "Opaque pagination token returned by the previous page.",
+  help: "Opaque pagination token. Continue only with the complete returned next_page_token from the same pagination chain. Do not modify, truncate, redact, mask, omit, normalize, rebuild, generate, or replace the middle with ellipses.",
 };
 
 function localCommand(name, description, options = {}) {
@@ -58,11 +59,15 @@ localCommand(
   ]
 );
 localCommand(
+  "xhs-hot-search",
+  "Fetch the current 小红书 / Xiaohongshu / XHS / RedNote search hot list.",
+);
+localCommand(
   "xhs-detail",
   "Read one 小红书 / Xiaohongshu / XHS / RedNote note detail.",
   [
     { name: "note-id", type: "string", help: "Known XHS note ID." },
-    { name: "url", type: "string", help: "XHS note URL, short link, share text, or note ID." },
+    { name: "url", type: "string", help: "XHS note URL, short link, or share text." },
   ]
 );
 localCommand(

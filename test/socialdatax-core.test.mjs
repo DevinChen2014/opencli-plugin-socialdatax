@@ -22,6 +22,10 @@ test("missing API key tells users to set SOCIALDATAX_API_KEY", () => {
 
 test("xhs command arguments map to socialdatax-skills CLI", () => {
   assert.deepEqual(
+    buildSocialDataXArgs("xhs-hot-search", {}),
+    ["xhs", "hot-search"]
+  );
+  assert.deepEqual(
     buildSocialDataXArgs("xhs-search", {
       keyword: "露营桌",
       page: 2,
@@ -216,6 +220,24 @@ test("list results are flattened with pagination metadata", () => {
     ]
   );
   assert.deepEqual(
+    flattenSocialDataXEnvelope("xhs-hot-search", {
+      data: {
+        items: [
+          {
+            title: "热点",
+            hot_value: 123,
+          },
+        ],
+      },
+    }),
+    [
+      {
+        title: "热点",
+        hot_value: 123,
+      },
+    ]
+  );
+  assert.deepEqual(
     flattenSocialDataXEnvelope("douyin-hot-search", {
       data: {
         hot_items: [
@@ -312,10 +334,46 @@ test("metadata docs and skill contain bilingual search keywords", () => {
     assert.match(combined, new RegExp(keyword));
   }
   assert.match(combined, /SOCIALDATAX_API_KEY/);
-  assert.match(combined, /https:\/\/socialdatax\.com/);
+  assert.match(combined, /https:\/\/socialdatax\.52choujiang\.com/);
+  assert.match(combined, /xhs-hot-search/);
   assert.match(combined, /douyin-replies/);
   assert.match(combined, /do not infer alternate domains/);
   assert.doesNotMatch(combined, /socialdata\.tools/);
+});
+
+test("OpenCLI public surfaces preserve opaque tokens and XHS note URLs", () => {
+  for (const file of ["socialdatax.ts", "socialdatax.js"]) {
+    const content = readFileSync(join(packageDir, file), "utf8");
+    assert.match(content, /complete returned `?next_page_token`?/);
+    assert.match(
+      content,
+      /Do not modify, truncate, redact, mask, omit, normalize, rebuild, generate, or replace the middle with ellipses/
+    );
+    assert.doesNotMatch(content, /Opaque pagination token returned by the previous page/);
+  }
+
+  for (const file of [
+    "README.md",
+    "skills/socialdatax-opencli/SKILL.md",
+  ]) {
+    const content = readFileSync(join(packageDir, file), "utf8");
+    assert.match(content, /complete returned `next_page_token`/);
+    assert.match(
+      content,
+      /Do not modify, truncate, redact, mask, omit, normalize, rebuild, generate, or replace the middle with ellipses/
+    );
+    assert.match(
+      content,
+      /in every use of a returned `note_url`, such as final answers, display, references, storage, output, or forwarding/
+    );
+    assert.match(content, /including `xsec_token` query parameters/);
+    assert.match(
+      content,
+      /Do not modify, truncate, redact, normalize, rebuild, or replace it with a link assembled from `note_id`/
+    );
+    assert.match(content, /complete 24-character lowercase hex ID/);
+    assert.match(content, /If `note_url` is null, do not synthesize a public link from `note_id`/);
+  }
 });
 
 test("package ships a precompiled OpenCLI JS entrypoint", () => {
@@ -327,6 +385,8 @@ test("package ships a precompiled OpenCLI JS entrypoint", () => {
   assert.match(entrypoint, /@jackwener\/opencli\/registry/);
   assert.match(entrypoint, /site: "socialdatax"/);
   assert.match(entrypoint, /xhs-search/);
+  assert.match(entrypoint, /xhs-hot-search/);
+  assert.match(entrypoint, /"hot_value"/);
   assert.match(entrypoint, /douyin-hot-search/);
   assert.match(entrypoint, /douyin-search/);
   assert.match(entrypoint, /douyin-replies/);
@@ -338,6 +398,7 @@ test("package and OpenCLI manifest versions stay in sync", () => {
   const manifest = JSON.parse(readFileSync(join(packageDir, "opencli-plugin.json"), "utf8"));
   assert.equal(manifest.version, packageJson.version);
   assert.equal(packageJson.engines.node, ">=20.18.1");
+  assert.match(manifest.description, /Xiaohongshu search hot list/);
   assert.match(manifest.description, /Douyin hot search/);
   assert.match(manifest.description, /comments\/replies/);
   assert.match(manifest.description, /creator short-drama series/);

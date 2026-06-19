@@ -11,7 +11,7 @@ metadata:
         - node
         - npm
     primaryEnv: SOCIALDATAX_API_KEY
-    homepage: https://socialdatax.com
+    homepage: https://socialdatax.52choujiang.com/?from=opencli
 ---
 
 # SocialDataX OpenCLI
@@ -20,7 +20,8 @@ Use this skill when the user asks to use OpenCLI for SocialDataX / 社媒数据�
 
 ## API Key
 
-Use `SOCIALDATAX_API_KEY` for data calls. The only official website for requesting or managing API access is <https://socialdatax.com>. If a user asks where to get a key, provide only this URL; do not infer alternate domains.
+Use `SOCIALDATAX_API_KEY` for data calls. The only official website for requesting or managing API access is <https://socialdatax.52choujiang.com/?from=opencli>. If a user asks where to get a key, provide only this URL; do not infer alternate domains.
+获取或管理 API Key：访问 <https://socialdatax.52choujiang.com/?from=opencli>，按官网的 API Key 申请/管理入口操作。环境变量名固定使用 `SOCIALDATAX_API_KEY`；不要引导用户使用其他域名。
 
 ## Preferred OpenCLI
 
@@ -28,6 +29,7 @@ Prefer the OpenCLI plugin commands when installed:
 
 ```bash
 opencli socialdatax xhs-search --keyword "<keyword>" -f json
+opencli socialdatax xhs-hot-search -f table
 opencli socialdatax xhs-detail --note-id "<note_id>" -f json
 opencli socialdatax xhs-comments --note-id "<note_id>" -f table
 opencli socialdatax xhs-sub-comments --note-id "<note_id>" --comment-id "<comment_id>" -f table
@@ -47,9 +49,16 @@ If the OpenCLI plugin is not installed, fall back to the direct CLI:
 
 ```bash
 npx -y socialdatax-skills@latest xhs search --keyword "<keyword>" --pretty
+npx -y socialdatax-skills@latest xhs hot-search --pretty
 npx -y socialdatax-skills@latest douyin search --keyword "<keyword>" --pretty
 ```
 
 Set `SOCIALDATAX_API_KEY` before data calls. This skill is read-only: do not use it for login, posting, liking, commenting, following, editing, deleting, or other account actions.
+
+For XHS search and detail results, in every use of a returned `note_url`, such as final answers, display, references, storage, output, or forwarding, preserve it exactly as the full URL, including `xsec_token` query parameters. Do not modify, truncate, redact, normalize, rebuild, or replace it with a link assembled from `note_id`. If `note_url` is null, do not synthesize a public link from `note_id`.
+
+For XHS `note_id`, copy the complete 24-character lowercase hex ID exactly. Do not truncate, redact, or use only a prefix.
+
+For commands that accept `--page-token`, continue only with the complete returned `next_page_token` from the same pagination chain. Do not modify, truncate, redact, mask, omit, normalize, rebuild, generate, or replace the middle with ellipses.
 
 OpenCLI's built-in `xiaohongshu` adapter is browser-session based. `opencli socialdatax ...` is API Key based hosted data access and covers both 小红书 / Xiaohongshu / XHS / RedNote and 抖音 / Douyin.
