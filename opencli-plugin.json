@@ -2,9 +2,9 @@
   "name": "socialdatax",
   "displayName": "SocialDataX / 社媒数据助手",
   "description": "SocialDataX / 社媒数据助手 provides hosted read-only social data tools for 小红书 / Xiaohongshu / XHS / RedNote and 抖音 / Douyin: search content, Xiaohongshu search hot list, Douyin hot search, read details, analyze comments/replies, creator profiles, creator posts, and creator short-drama series.",
-  "version": "0.1.5",
+  "version": "0.1.7",
   "opencli": ">=1.0.0",
-  "homepage": "https://socialdatax.52choujiang.com",
+  "homepage": "https://socialdatax.com",
   "keywords": [
     "SocialDataX",
     "社媒数据助手",

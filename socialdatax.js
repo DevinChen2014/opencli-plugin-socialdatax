@@ -20,7 +20,6 @@ const COMMON_COLUMNS = [
   "like_count",
   "comment_count",
   "top_level_comment_count",
-  "next_page",
   "next_page_token",
 ];
 
@@ -52,7 +51,7 @@ localCommand(
   "Search 小红书 / Xiaohongshu / XHS / RedNote notes with SocialDataX / 社媒数据助手.",
   [
     { name: "keyword", type: "string", required: true, help: "Search keyword." },
-    { name: "page", type: "int", help: "1-based page number." },
+    pageTokenOption,
     { name: "sort-type", type: "string", help: "general, time_descending, like_count_descending, comment_count_descending, or collect_count_descending." },
     { name: "note-type", type: "string", help: "all, image, or video." },
     { name: "publish-time-range", type: "string", help: "all, day, week, or half_year." },
@@ -77,6 +76,7 @@ localCommand(
     { name: "note-id", type: "string", help: "Known XHS note ID." },
     { name: "url", type: "string", help: "XHS note URL, short link, or share text." },
     pageTokenOption,
+    { name: "sort-type", type: "string", help: "default, time_descending, or like_count_descending." },
   ]
 );
 localCommand(

@@ -15,7 +15,7 @@ const packageDir = fileURLToPath(new URL("..", import.meta.url));
 
 test("missing API key tells users to set SOCIALDATAX_API_KEY", () => {
   assert.throws(
-    () => buildSocialDataXProcess("xhs-search", { keyword: "露营桌" }, {}),
+    () => buildSocialDataXProcess("xhs-search", { keyword: "露营" }, {}),
     /Set SOCIALDATAX_API_KEY/
   );
 });
@@ -27,8 +27,8 @@ test("xhs command arguments map to socialdatax-skills CLI", () => {
   );
   assert.deepEqual(
     buildSocialDataXArgs("xhs-search", {
-      keyword: "露营桌",
-      page: 2,
+      keyword: "露营",
+      pageToken: "next-search-token",
       sortType: "like_count_descending",
       noteType: "image",
       publishTimeRange: "week",
@@ -37,9 +37,9 @@ test("xhs command arguments map to socialdatax-skills CLI", () => {
       "xhs",
       "search",
       "--keyword",
-      "露营桌",
-      "--page",
-      "2",
+      "露营",
+      "--page-token",
+      "next-search-token",
       "--sort-type",
       "like_count_descending",
       "--note-type",
@@ -52,8 +52,18 @@ test("xhs command arguments map to socialdatax-skills CLI", () => {
     buildSocialDataXArgs("socialdatax-xhs-comments", {
       "note-id": "note-1",
       "page-token": "next",
+      "sort-type": "time_descending",
     }),
-    ["xhs", "comments", "--note-id", "note-1", "--page-token", "next"]
+    [
+      "xhs",
+      "comments",
+      "--note-id",
+      "note-1",
+      "--page-token",
+      "next",
+      "--sort-type",
+      "time_descending",
+    ]
   );
   assert.deepEqual(
     buildSocialDataXArgs("xhs-sub-comments", {
@@ -64,6 +74,17 @@ test("xhs command arguments map to socialdatax-skills CLI", () => {
   );
 });
 
+test("xhs search rejects legacy numeric page instead of silently restarting pagination", () => {
+  assert.throws(
+    () =>
+      buildSocialDataXArgs("xhs-search", {
+        keyword: "露营",
+        page: 2,
+      }),
+    /Unsupported option page for xhs-search/
+  );
+});
+
 test("douyin command arguments map to socialdatax-skills CLI", () => {
   assert.deepEqual(
     buildSocialDataXArgs("douyin-hot-search", {}),
@@ -71,7 +92,7 @@ test("douyin command arguments map to socialdatax-skills CLI", () => {
   );
   assert.deepEqual(
     buildSocialDataXArgs("douyin-search", {
-      keyword: "露营桌",
+      keyword: "露营",
       pageToken: "page-2",
       sortType: "time_descending",
       publishTimeRange: "day",
@@ -82,7 +103,7 @@ test("douyin command arguments map to socialdatax-skills CLI", () => {
       "douyin",
       "search",
       "--keyword",
-      "露营桌",
+      "露营",
       "--page-token",
       "page-2",
       "--sort-type",
@@ -164,7 +185,7 @@ test("list results are flattened with pagination metadata", () => {
   assert.deepEqual(
     flattenSocialDataXEnvelope("xhs-search", {
       data: {
-        next_page: 2,
+        next_page_token: "next-search-token",
         total_count: 12,
         items: [
           {
@@ -177,7 +198,7 @@ test("list results are flattened with pagination metadata", () => {
     }),
     [
       {
-        next_page: 2,
+        next_page_token: "next-search-token",
         total_count: 12,
         note_id: "note-1",
         author_nickname: "作者",
@@ -334,7 +355,7 @@ test("metadata docs and skill contain bilingual search keywords", () => {
     assert.match(combined, new RegExp(keyword));
   }
   assert.match(combined, /SOCIALDATAX_API_KEY/);
-  assert.match(combined, /https:\/\/socialdatax\.52choujiang\.com/);
+  assert.match(combined, /https:\/\/socialdatax\.com/);
   assert.match(combined, /xhs-hot-search/);
   assert.match(combined, /douyin-replies/);
   assert.match(combined, /do not infer alternate domains/);
@@ -344,7 +365,13 @@ test("metadata docs and skill contain bilingual search keywords", () => {
 test("OpenCLI public surfaces preserve opaque tokens and XHS note URLs", () => {
   for (const file of ["socialdatax.ts", "socialdatax.js"]) {
     const content = readFileSync(join(packageDir, file), "utf8");
+    const xhsSearchSection = content.slice(
+      content.indexOf('"xhs-search"'),
+      content.indexOf('"xhs-hot-search"')
+    );
     assert.match(content, /complete returned `?next_page_token`?/);
+    assert.match(xhsSearchSection, /pageTokenOption/);
+    assert.doesNotMatch(xhsSearchSection, /name: "page"/);
     assert.match(
       content,
       /Do not modify, truncate, redact, mask, omit, normalize, rebuild, generate, or replace the middle with ellipses/
@@ -371,7 +398,7 @@ test("OpenCLI public surfaces preserve opaque tokens and XHS note URLs", () => {
       content,
       /Do not modify, truncate, redact, normalize, rebuild, or replace it with a link assembled from `note_id`/
     );
-    assert.match(content, /complete 24-character lowercase hex ID/);
+    assert.match(content, /entire returned `note_id` exactly/);
     assert.match(content, /If `note_url` is null, do not synthesize a public link from `note_id`/);
   }
 });
@@ -385,6 +412,11 @@ test("package ships a precompiled OpenCLI JS entrypoint", () => {
   assert.match(entrypoint, /@jackwener\/opencli\/registry/);
   assert.match(entrypoint, /site: "socialdatax"/);
   assert.match(entrypoint, /xhs-search/);
+  assert.match(entrypoint, /pageTokenOption/);
+  assert.doesNotMatch(
+    entrypoint.slice(entrypoint.indexOf('"xhs-search"'), entrypoint.indexOf('"xhs-hot-search"')),
+    /name: "page"/
+  );
   assert.match(entrypoint, /xhs-hot-search/);
   assert.match(entrypoint, /"hot_value"/);
   assert.match(entrypoint, /douyin-hot-search/);

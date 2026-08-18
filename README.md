@@ -7,7 +7,7 @@ Use this plugin when you want API Key based data access without relying on a log
 This is a complement to OpenCLI's built-in browser-backed `xiaohongshu` adapter, not a replacement for that adapter. OpenCLI 内置 `xiaohongshu` 更偏浏览器登录态能力；`socialdatax` 是 SocialDataX / 社媒数据助手 提供的 API Key hosted 只读数据能力，覆盖小红书 / Xiaohongshu / XHS / RedNote 和抖音 / Douyin。
 
 - Product: `SocialDataX` / `社媒数据助手`
-- Website: <https://socialdatax.52choujiang.com>
+- Website: <https://socialdatax.com>
 - Platforms: 小红书 / Xiaohongshu / XHS / RedNote, 抖音 / Douyin
 - Capabilities: 小红书搜索热榜 / Xiaohongshu search hot list, 笔记搜索 / note search, 笔记详情 / note details, 评论 / comments, 评论回复 / comment replies, 博主信息 / creator profiles, 博主内容列表 / creator posts, 抖音热榜 / Douyin hot search, 创作者短剧列表 / creator short-drama series
 - Runtime package: `socialdatax-skills@latest`
@@ -41,23 +41,24 @@ export SOCIALDATAX_API_KEY="<SOCIALDATAX_API_KEY>"
 
 Request or manage API access from the official product website:
 
-<https://socialdatax.52choujiang.com/?from=opencli>
+<https://socialdatax.com/ai?from=opencli>
 
 Use the key as `SOCIALDATAX_API_KEY` for OpenCLI data calls. Do not commit real API keys to code, docs, issues, or screenshots.
 
 ## Commands / 命令
 
 ```bash
-opencli socialdatax xhs-search --keyword "露营桌" -f json
+opencli socialdatax xhs-search --keyword "露营" -f json
 opencli socialdatax xhs-hot-search -f table
 opencli socialdatax xhs-detail --note-id "<note_id>" -f json
 opencli socialdatax xhs-comments --note-id "<note_id>" -f table
+opencli socialdatax xhs-comments --note-id "<note_id>" --sort-type time_descending -f table
 opencli socialdatax xhs-sub-comments --note-id "<note_id>" --comment-id "<comment_id>" -f table
 opencli socialdatax xhs-user-info --user-id "<user_id>" -f json
 opencli socialdatax xhs-user-posts --user-id "<user_id>" -f table
 
 opencli socialdatax douyin-hot-search -f table
-opencli socialdatax douyin-search --keyword "露营桌" -f json
+opencli socialdatax douyin-search --keyword "露营" -f json
 opencli socialdatax douyin-detail --aweme-id "<aweme_id>" -f json
 opencli socialdatax douyin-comments --aweme-id "<aweme_id>" -f table
 opencli socialdatax douyin-replies --aweme-id "<aweme_id>" --comment-id "<comment_id>" -f table
@@ -70,9 +71,11 @@ Each command forwards to `npx -y socialdatax-skills@latest ...` and flattens ret
 
 For XHS search and detail results, in every use of a returned `note_url`, such as final answers, display, references, storage, output, or forwarding, preserve it exactly as the full URL, including `xsec_token` query parameters. Do not modify, truncate, redact, normalize, rebuild, or replace it with a link assembled from `note_id`. If `note_url` is null, do not synthesize a public link from `note_id`.
 
-For XHS `note_id`, copy the complete 24-character lowercase hex ID exactly. Do not truncate, redact, or use only a prefix.
+For XHS `note_id`, copy the entire returned `note_id` exactly. Do not truncate, redact, or use only a prefix.
 
 For commands that accept `--page-token`, continue only with the complete returned `next_page_token` from the same pagination chain. Do not modify, truncate, redact, mask, omit, normalize, rebuild, generate, or replace the middle with ellipses.
+
+For XHS comments, `--sort-type` accepts `default`, `time_descending`, or `like_count_descending`; omit it for the platform default comment order.
 
 ## Read-Only Boundary / 只读边界
 
@@ -106,9 +109,13 @@ Users, agents, and search engines may discover this plugin with these Chinese an
 
 Published package: `opencli-plugin-socialdatax`.
 
-Current package version: `0.1.5`.
+Current package version: `0.1.7`.
 
-Patch `0.1.5` exposes the Xiaohongshu search hot list command through OpenCLI and temporarily routes API Key guidance to <https://socialdatax.52choujiang.com/?from=opencli>.
+Patch `0.1.7` adds the `--sort-type <default|time_descending|like_count_descending>` option to `xhs-comments`.
+
+Patch `0.1.6` updates Xiaohongshu search pagination to opaque `page_token` / `next_page_token` continuation.
+
+Patch `0.1.5` exposes the Xiaohongshu search hot list command through OpenCLI and updates API Key guidance to the official SocialDataX website.
 
 Patch `0.1.4` adds OpenCLI attribution URL guidance for SocialDataX API Key acquisition.
 
