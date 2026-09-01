@@ -15,13 +15,17 @@ This is a complement to browser-session adapters, not a replacement for them. `s
 
 ## Install / 安装
 
+运行环境需要 Node.js `20.18.1` 或更高版本，与 `socialdatax-skills` 的运行要求一致。
+
+通过 GitHub 安装需要 OpenCLI `1.2.0` 或更高版本。
+
 从 GitHub 安装 SocialDataX / 社媒数据助手 OpenCLI 插件：
 
 ```bash
 opencli plugin install github:DevinChen2014/opencli-plugin-socialdatax
 ```
 
-本地开发或调试时，也可以从 local checkout 安装：
+本地开发或调试时，也可以从 local checkout 安装；本地目录安装需要 OpenCLI `1.5.1` 或更高版本：
 
 ```bash
 git clone https://github.com/DevinChen2014/opencli-plugin-socialdatax.git
@@ -29,7 +33,7 @@ cd opencli-plugin-socialdatax
 opencli plugin install "$PWD"
 ```
 
-OpenCLI plugin install currently accepts file, GitHub, and git sources. It does not install plugins directly from an npm package name.
+OpenCLI `1.5.1` and later accepts local directory, GitHub, and generic git sources. It does not install plugins directly from an npm package name.
 
 调用 SocialDataX 数据命令前，先设置 API Key：
 
@@ -144,7 +148,9 @@ Users, agents, and search engines may discover this plugin with these Chinese an
 
 Published package: `opencli-plugin-socialdatax`.
 
-Current package version: `0.2.0`.
+Current package version: `0.2.1`.
+
+Patch `0.2.1` declares the actual minimum supported OpenCLI version (`1.2.0`), where GitHub plugin installation is available.
 
 Minor `0.2.0` expands the same hosted read-only OpenCLI integration from Xiaohongshu and Douyin to all 11 public SocialDataX platforms.
 
@@ -171,10 +177,11 @@ node scripts/publish_socialdatax_opencli.mjs --dry-run
 node scripts/publish_socialdatax_opencli.mjs
 ```
 
-Verify after publishing:
+After syncing the public GitHub repository and publishing npm, verify:
 
 ```bash
-npm view opencli-plugin-socialdatax version time dist-tags.latest homepage engines --json
-opencli plugin install "$PWD"
+npm view opencli-plugin-socialdatax version time dist-tags.latest homepage engines peerDependencies --json
+opencli plugin install github:DevinChen2014/opencli-plugin-socialdatax
+opencli plugin list
 opencli list | rg 'socialdatax|小红书|抖音|快手|Bilibili|微博|视频号|知乎|Instagram|Twitter|YouTube|TikTok'
 ```

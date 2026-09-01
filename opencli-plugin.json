@@ -2,8 +2,8 @@
   "name": "socialdatax",
   "displayName": "SocialDataX / 社媒数据助手",
   "description": "SocialDataX / 社媒数据助手 provides hosted read-only search, detail, comments/replies, and creator data for Xiaohongshu, Douyin, Kuaishou, Bilibili, Weibo, WeChat Channels, Zhihu, Instagram, X / Twitter, YouTube, and TikTok, including the Xiaohongshu search hot list, Douyin hot search, and Douyin creator short-drama series.",
-  "version": "0.2.0",
-  "opencli": ">=1.0.0",
+  "version": "0.2.1",
+  "opencli": ">=1.2.0",
   "homepage": "https://socialdatax.com",
   "keywords": [
     "SocialDataX",

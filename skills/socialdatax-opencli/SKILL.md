@@ -18,6 +18,8 @@ metadata:
 
 Use this skill when the user asks to use OpenCLI for SocialDataX / 社媒数据助手 read-only data workflows across 小红书 / Xiaohongshu / XHS / RedNote, 抖音 / Douyin, 快手 / Kuaishou / Kwai, Bilibili, 微博 / Weibo, 微信视频号 / WeChat Channels, 知乎 / Zhihu, Instagram, X / Twitter, YouTube, or TikTok.
 
+Runtime requirement: Node.js `20.18.1` or newer.
+
 ## API Key
 
 Use `SOCIALDATAX_API_KEY` for data calls. The only official website for requesting or managing API access is <https://socialdatax.com/ai?from=opencli>. If a user asks where to get a key, provide only this URL; do not infer alternate domains.

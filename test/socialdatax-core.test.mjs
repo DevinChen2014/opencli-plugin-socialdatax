@@ -761,9 +761,17 @@ test("package ships a precompiled OpenCLI JS entrypoint", () => {
 test("package and OpenCLI manifest versions stay in sync", () => {
   const packageJson = JSON.parse(readFileSync(join(packageDir, "package.json"), "utf8"));
   const manifest = JSON.parse(readFileSync(join(packageDir, "opencli-plugin.json"), "utf8"));
+  const readme = readFileSync(join(packageDir, "README.md"), "utf8");
+  const skill = readFileSync(join(packageDir, "skills/socialdatax-opencli/SKILL.md"), "utf8");
   assert.equal(manifest.version, packageJson.version);
-  assert.equal(packageJson.version, "0.2.0");
+  assert.equal(packageJson.version, "0.2.1");
   assert.equal(packageJson.engines.node, ">=20.18.1");
+  assert.equal(manifest.opencli, ">=1.2.0");
+  assert.equal(packageJson.peerDependencies["@jackwener/opencli"], manifest.opencli);
+  assert.match(readme, /Node\.js `20\.18\.1`/);
+  assert.match(skill, /Node\.js `20\.18\.1`/);
+  assert.match(readme, /GitHub 安装需要 OpenCLI `1\.2\.0`/);
+  assert.match(readme, /本地目录安装需要 OpenCLI `1\.5\.1`/);
   assert.match(manifest.description, /11 public platforms|Xiaohongshu/);
   assert.match(manifest.description, /Kuaishou/);
   assert.match(manifest.description, /TikTok/);
