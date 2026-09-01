@@ -6,8 +6,10 @@ import test from "node:test";
 
 import {
   buildSocialDataXArgs,
+  buildSocialDataXCommandExample,
   buildSocialDataXProcess,
   flattenSocialDataXEnvelope,
+  listSocialDataXCommands,
   runSocialDataXCommand,
 } from "../lib/socialdatax-core.mjs";
 
@@ -17,6 +19,45 @@ test("missing API key tells users to set SOCIALDATAX_API_KEY", () => {
   assert.throws(
     () => buildSocialDataXProcess("xhs-search", { keyword: "露营" }, {}),
     /Set SOCIALDATAX_API_KEY/
+  );
+});
+
+test("agent-facing examples include required or single-entrypoint arguments", () => {
+  assert.equal(
+    buildSocialDataXCommandExample("xhs-hot-search"),
+    "opencli socialdatax xhs-hot-search -f json"
+  );
+  assert.equal(
+    buildSocialDataXCommandExample("xhs-search", [
+      { name: "keyword", type: "string", required: true },
+      { name: "page-token", type: "string" },
+    ]),
+    'opencli socialdatax xhs-search --keyword "<keyword>" -f json'
+  );
+  assert.equal(
+    buildSocialDataXCommandExample("xhs-detail", [
+      { name: "note-id", type: "string" },
+      { name: "url", type: "string" },
+    ]),
+    'opencli socialdatax xhs-detail --url "<url>" -f json'
+  );
+  assert.equal(
+    buildSocialDataXCommandExample("wechat-comments", [
+      { name: "object-id", type: "string" },
+      { name: "object-nonce-id", type: "string" },
+      { name: "url", type: "string" },
+      { name: "page-token", type: "string" },
+    ]),
+    'opencli socialdatax wechat-comments --url "<url>" -f json'
+  );
+  assert.equal(
+    buildSocialDataXCommandExample("bilibili-replies", [
+      { name: "comment-object-id", type: "string", required: true },
+      { name: "comment-object-type", type: "string", required: true },
+      { name: "comment-id", type: "string", required: true },
+      { name: "page-token", type: "string" },
+    ]),
+    'opencli socialdatax bilibili-replies --comment-object-id "<comment_object_id>" --comment-object-type "<comment_object_type>" --comment-id "<comment_id>" -f json'
   );
 });
 
@@ -156,6 +197,146 @@ test("douyin command arguments map to socialdatax-skills CLI", () => {
   );
 });
 
+test("all additional platform arguments map to socialdatax-skills CLI", () => {
+  const cases = [
+    [
+      "kuaishou-user-search",
+      { keyword: "露营", pageToken: "next" },
+      ["kuaishou", "user-search", "--keyword", "露营", "--page-token", "next"],
+    ],
+    [
+      "bilibili-search-videos",
+      {
+        keyword: "AI",
+        "page-token": "next",
+        "sort-type": "time_descending",
+        "publish-time-start-date": "2026-08-01",
+        "publish-time-end-date": "2026-08-31",
+      },
+      [
+        "bilibili",
+        "search-videos",
+        "--keyword",
+        "AI",
+        "--page-token",
+        "next",
+        "--sort-type",
+        "time_descending",
+        "--publish-time-start-date",
+        "2026-08-01",
+        "--publish-time-end-date",
+        "2026-08-31",
+      ],
+    ],
+    [
+      "bilibili-replies",
+      { "comment-object-id": "123", "comment-object-type": "1", "comment-id": "456" },
+      [
+        "bilibili",
+        "replies",
+        "--comment-object-id",
+        "123",
+        "--comment-object-type",
+        "1",
+        "--comment-id",
+        "456",
+      ],
+    ],
+    [
+      "weibo-comments",
+      { postUrl: "https://weibo.com/1/abc", pageToken: "next" },
+      [
+        "weibo",
+        "comments",
+        "--post-url",
+        "https://weibo.com/1/abc",
+        "--page-token",
+        "next",
+      ],
+    ],
+    [
+      "wechat-replies",
+      { "object-id": "object-1", objectNonceId: "nonce-1", commentId: "comment-1" },
+      [
+        "wechat",
+        "replies",
+        "--object-id",
+        "object-1",
+        "--object-nonce-id",
+        "nonce-1",
+        "--comment-id",
+        "comment-1",
+      ],
+    ],
+    [
+      "wechat-user-info",
+      { url: "https://weixin.qq.com/sph/ANxgB9MB8i" },
+      ["wechat", "user-info", "--url", "https://weixin.qq.com/sph/ANxgB9MB8i"],
+    ],
+    [
+      "zhihu-search",
+      { keyword: "AI", contentType: "video", sortType: "time_descending", pageToken: "next" },
+      [
+        "zhihu",
+        "search",
+        "--keyword",
+        "AI",
+        "--page-token",
+        "next",
+        "--content-type",
+        "video",
+        "--sort-type",
+        "time_descending",
+      ],
+    ],
+    [
+      "instagram-user-info",
+      { username: "socialdatax" },
+      ["instagram", "user-info", "--username", "socialdatax"],
+    ],
+    [
+      "socialdatax-x-user-posts",
+      { "profile-url": "https://x.com/openai", "page-token": "next" },
+      [
+        "x",
+        "user-posts",
+        "--profile-url",
+        "https://x.com/openai",
+        "--page-token",
+        "next",
+      ],
+    ],
+    [
+      "youtube-search",
+      { keyword: "openai", videoType: "video", publishTimeRange: "this_week" },
+      [
+        "youtube",
+        "search",
+        "--keyword",
+        "openai",
+        "--video-type",
+        "video",
+        "--publish-time-range",
+        "this_week",
+      ],
+    ],
+    [
+      "youtube-replies",
+      { "reply-token": "reply-token", pageToken: "next" },
+      ["youtube", "replies", "--reply-token", "reply-token", "--page-token", "next"],
+    ],
+    [
+      "tiktok-comments",
+      { postId: "123", "page-token": "next" },
+      ["tiktok", "comments", "--post-id", "123", "--page-token", "next"],
+    ],
+  ];
+
+  for (const [command, options, expected] of cases) {
+    assert.deepEqual(buildSocialDataXArgs(command, options), expected, command);
+  }
+});
+
 test("process builder uses npx by default and mock bin for tests", () => {
   assert.deepEqual(
     buildSocialDataXProcess(
@@ -278,6 +459,132 @@ test("list results are flattened with pagination metadata", () => {
       },
     ]
   );
+  assert.deepEqual(
+    flattenSocialDataXEnvelope("kuaishou-hot-search", {
+      data: {
+        items: [{ rank: 1, keyword: "热点", hot_value: 100 }],
+      },
+    }),
+    [{ rank: 1, keyword: "热点", hot_value: 100 }]
+  );
+  assert.deepEqual(
+    flattenSocialDataXEnvelope("bilibili-search-videos", {
+      data: {
+        next_page_token: "next",
+        items: [{ content_id: "BV1abc", author: { nickname: "作者" } }],
+      },
+    }),
+    [
+      {
+        next_page_token: "next",
+        content_id: "BV1abc",
+        author_nickname: "作者",
+      },
+    ]
+  );
+});
+
+test("new platform list results preserve confirmed top-level metadata", () => {
+  const cases = [
+    ["kuaishou-comments", { comment_count: 3 }],
+    ["bilibili-comments", { comment_count: 4 }],
+    ["bilibili-reactions", { post_id: "123", like_repost_count: 5 }],
+    ["bilibili-user-articles", { article_count: 6 }],
+    ["bilibili-user-dynamics", { dynamic_count: 7 }],
+    ["weibo-comments", { comment_count: 8 }],
+    ["wechat-comments", { comment_count: 9 }],
+    ["zhihu-comments", { comment_count: 10 }],
+    ["zhihu-replies", { reply_count: 11 }],
+    ["instagram-comments", { post_url: "https://www.instagram.com/p/abc/", comment_count: 12 }],
+    ["instagram-replies", { reply_count: 13 }],
+    ["x-comments", { post_url: "https://x.com/user/status/123", comment_count: 14 }],
+    ["youtube-comments", { comment_count: 15 }],
+    ["tiktok-comments", { comment_count: 16 }],
+    ["tiktok-replies", { reply_count: 17 }],
+  ];
+
+  for (const [command, metadata] of cases) {
+    assert.deepEqual(
+      flattenSocialDataXEnvelope(command, {
+        data: {
+          next_page_token: "next",
+          ...metadata,
+          items: [{ item_id: "item-1" }],
+        },
+      }),
+      [{ next_page_token: "next", ...metadata, item_id: "item-1" }],
+      command
+    );
+  }
+});
+
+test("empty paginated list preserves only a non-empty next page token", () => {
+  assert.deepEqual(
+    flattenSocialDataXEnvelope("x-search", {
+      data: {
+        items: [],
+        next_page_token: "next",
+      },
+    }),
+    [{ next_page_token: "next" }]
+  );
+  assert.deepEqual(
+    flattenSocialDataXEnvelope("x-search", {
+      data: {
+        items: [],
+        next_page_token: "",
+      },
+    }),
+    []
+  );
+});
+
+test("list rows expose later nested fields and keep pagination metadata last", () => {
+  const rows = flattenSocialDataXEnvelope("x-search", {
+    data: {
+      items: [
+        { post_id: "1", author: null },
+        { post_id: "2", author: { user_id: "u2", username: "author2" } },
+      ],
+      next_page_token: "next",
+    },
+  });
+
+  assert.deepEqual(Object.keys(rows[0]), [
+    "post_id",
+    "author",
+    "author_user_id",
+    "author_username",
+    "next_page_token",
+  ]);
+  assert.deepEqual(rows, [
+    {
+      post_id: "1",
+      author: "",
+      author_user_id: undefined,
+      author_username: undefined,
+      next_page_token: "next",
+    },
+    {
+      post_id: "2",
+      author_user_id: "u2",
+      author_username: "author2",
+      next_page_token: "next",
+    },
+  ]);
+  assert.deepEqual(JSON.parse(JSON.stringify(rows)), [
+    {
+      post_id: "1",
+      author: "",
+      next_page_token: "next",
+    },
+    {
+      post_id: "2",
+      author_user_id: "u2",
+      author_username: "author2",
+      next_page_token: "next",
+    },
+  ]);
 });
 
 test("single-object results are flattened as one row", () => {
@@ -347,6 +654,15 @@ test("metadata docs and skill contain bilingual search keywords", () => {
   for (const keyword of [
     "小红书",
     "抖音",
+    "快手",
+    "Bilibili",
+    "微博",
+    "WeChat Channels",
+    "知乎",
+    "Instagram",
+    "Twitter",
+    "YouTube",
+    "TikTok",
     "Xiaohongshu",
     "Douyin",
     "SocialDataX",
@@ -358,6 +674,15 @@ test("metadata docs and skill contain bilingual search keywords", () => {
   assert.match(combined, /https:\/\/socialdatax\.com/);
   assert.match(combined, /xhs-hot-search/);
   assert.match(combined, /douyin-replies/);
+  assert.match(combined, /kuaishou-search/);
+  assert.match(combined, /bilibili-search-videos/);
+  assert.match(combined, /weibo-hot-search/);
+  assert.match(combined, /wechat-search/);
+  assert.match(combined, /zhihu-hot-list/);
+  assert.match(combined, /instagram-search/);
+  assert.match(combined, /x-search/);
+  assert.match(combined, /youtube-search/);
+  assert.match(combined, /tiktok-search/);
   assert.match(combined, /do not infer alternate domains/);
   assert.doesNotMatch(combined, /socialdata\.tools/);
 });
@@ -411,6 +736,7 @@ test("package ships a precompiled OpenCLI JS entrypoint", () => {
   assert.equal(entrypoint, readFileSync(join(packageDir, "socialdatax.ts"), "utf8"));
   assert.match(entrypoint, /@jackwener\/opencli\/registry/);
   assert.match(entrypoint, /site: "socialdatax"/);
+  assert.match(entrypoint, /function localCommand\(name, description, options = \[\]\)/);
   assert.match(entrypoint, /xhs-search/);
   assert.match(entrypoint, /pageTokenOption/);
   assert.doesNotMatch(
@@ -418,20 +744,29 @@ test("package ships a precompiled OpenCLI JS entrypoint", () => {
     /name: "page"/
   );
   assert.match(entrypoint, /xhs-hot-search/);
-  assert.match(entrypoint, /"hot_value"/);
   assert.match(entrypoint, /douyin-hot-search/);
   assert.match(entrypoint, /douyin-search/);
   assert.match(entrypoint, /douyin-replies/);
   assert.match(entrypoint, /douyin-user-series/);
+
+  assert.doesNotMatch(entrypoint, /COMMON_COLUMNS|columns:\s*\[/);
+
+  const registeredCommands = Array.from(
+    entrypoint.matchAll(/localCommand\(\s*"([^"]+)"/g),
+    (match) => match[1]
+  );
+  assert.deepEqual(registeredCommands.sort(), listSocialDataXCommands().sort());
 });
 
 test("package and OpenCLI manifest versions stay in sync", () => {
   const packageJson = JSON.parse(readFileSync(join(packageDir, "package.json"), "utf8"));
   const manifest = JSON.parse(readFileSync(join(packageDir, "opencli-plugin.json"), "utf8"));
   assert.equal(manifest.version, packageJson.version);
+  assert.equal(packageJson.version, "0.2.0");
   assert.equal(packageJson.engines.node, ">=20.18.1");
-  assert.match(manifest.description, /Xiaohongshu search hot list/);
-  assert.match(manifest.description, /Douyin hot search/);
+  assert.match(manifest.description, /11 public platforms|Xiaohongshu/);
+  assert.match(manifest.description, /Kuaishou/);
+  assert.match(manifest.description, /TikTok/);
   assert.match(manifest.description, /comments\/replies/);
-  assert.match(manifest.description, /creator short-drama series/);
+  assert.match(manifest.description, /creator data/);
 });

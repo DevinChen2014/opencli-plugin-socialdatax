@@ -1,15 +1,15 @@
 # SocialDataX OpenCLI Plugin | 社媒数据助手 OpenCLI 插件
 
-SocialDataX / 社媒数据助手 OpenCLI 插件提供 API Key 鉴权的 hosted read-only social data tools，用于小红书 / Xiaohongshu / XHS / RedNote 和抖音 / Douyin 的搜索热榜、内容研究、社媒数据分析、选题观察、评论分析和创作者研究。
+SocialDataX / 社媒数据助手 OpenCLI 插件提供 API Key 鉴权的 hosted read-only social data tools，用于 11 个公开平台的内容搜索、热榜、详情、评论、创作者资料和创作者内容研究。
 
-Use this plugin when you want API Key based data access without relying on a logged-in browser session. 适合用 OpenCLI 做小红书搜索热榜 / search hot list、笔记搜索 / note search、笔记详情 / note details、评论 / comments、评论回复 / comment replies、博主信息 / creator profiles、博主笔记列表 / creator notes，以及抖音热榜 / hot search、作品搜索 / Douyin work search、作品详情 / work details、评论 / comments、评论回复 / comment replies、创作者资料 / creator profiles、创作者作品列表 / creator posts 和创作者短剧列表 / creator short-drama series.
+Use this plugin when you want API Key based social data access without relying on a logged-in browser session. 支持小红书、抖音、快手、Bilibili、微博、微信视频号、知乎、Instagram、X / Twitter、YouTube 和 TikTok。
 
-This is a complement to OpenCLI's built-in browser-backed `xiaohongshu` adapter, not a replacement for that adapter. OpenCLI 内置 `xiaohongshu` 更偏浏览器登录态能力；`socialdatax` 是 SocialDataX / 社媒数据助手 提供的 API Key hosted 只读数据能力，覆盖小红书 / Xiaohongshu / XHS / RedNote 和抖音 / Douyin。
+This is a complement to browser-session adapters, not a replacement for them. `socialdatax` provides API Key based hosted read-only data access and does not use local browser sessions.
 
 - Product: `SocialDataX` / `社媒数据助手`
 - Website: <https://socialdatax.com>
-- Platforms: 小红书 / Xiaohongshu / XHS / RedNote, 抖音 / Douyin
-- Capabilities: 小红书搜索热榜 / Xiaohongshu search hot list, 笔记搜索 / note search, 笔记详情 / note details, 评论 / comments, 评论回复 / comment replies, 博主信息 / creator profiles, 博主内容列表 / creator posts, 抖音热榜 / Douyin hot search, 创作者短剧列表 / creator short-drama series
+- Platforms: 小红书 / Xiaohongshu / XHS / RedNote, 抖音 / Douyin, 快手 / Kuaishou / Kwai, Bilibili / 哔哩哔哩 / B站, 微博 / Weibo, 微信视频号 / WeChat Channels, 知乎 / Zhihu, Instagram, X / Twitter, YouTube, TikTok
+- Capabilities: search and hot lists, content details, comments and replies, creator profiles and creator content lists; platform-specific read-only commands include Bilibili articles/dynamics/reactions, Weibo likers/reposts, WeChat Official Account article details, and Douyin creator short-drama series
 - Runtime package: `socialdatax-skills@latest`
 - API key environment variable: `SOCIALDATAX_API_KEY`
 
@@ -31,7 +31,7 @@ opencli plugin install "$PWD"
 
 OpenCLI plugin install currently accepts file, GitHub, and git sources. It does not install plugins directly from an npm package name.
 
-调用小红书 / Xiaohongshu / XHS / RedNote 或抖音 / Douyin 数据命令前，先设置 API Key：
+调用 SocialDataX 数据命令前，先设置 API Key：
 
 ```bash
 export SOCIALDATAX_API_KEY="<SOCIALDATAX_API_KEY>"
@@ -65,7 +65,27 @@ opencli socialdatax douyin-replies --aweme-id "<aweme_id>" --comment-id "<commen
 opencli socialdatax douyin-user-info --sec-user-id "<sec_user_id>" -f json
 opencli socialdatax douyin-user-posts --sec-user-id "<sec_user_id>" -f table
 opencli socialdatax douyin-user-series --sec-user-id "<sec_user_id>" -f table
+
+opencli socialdatax kuaishou-search --keyword "露营" -f json
+opencli socialdatax bilibili-search-videos --keyword "露营" -f json
+opencli socialdatax weibo-hot-search -f table
+opencli socialdatax wechat-search --keyword "露营" -f json
+opencli socialdatax zhihu-hot-list -f table
+opencli socialdatax instagram-search --keyword "camping" -f json
+opencli socialdatax x-search --keyword "openai" -f json
+opencli socialdatax youtube-search --keyword "openai" -f json
+opencli socialdatax tiktok-search --keyword "openai" -f json
 ```
+
+Command families by platform:
+
+- `kuaishou-*`: hot search, content and creator search, detail, comments/replies, creator profile and posts
+- `bilibili-*`: video/article search, detail, comments/replies, reactions, creator profile, videos, articles and dynamics
+- `weibo-*`: hot search, search, detail, comments/replies, likers/reposts, creator profile and posts
+- `wechat-*`: hot search, search, work detail, Official Account article detail, comments/replies, creator profile and posts
+- `zhihu-*`: hot list, search, detail, comments/replies, creator profile and posts
+- `instagram-*`, `x-*`, `tiktok-*`: search, detail, comments/replies, creator profile and posts
+- `youtube-*`: search, detail, comments/replies, channel profile and channel videos/Shorts
 
 Each command forwards to `npx -y socialdatax-skills@latest ...` and flattens returned JSON so OpenCLI can render table, JSON, YAML, or CSV output. 每个命令都会复用 `socialdatax-skills@latest`，把返回结果整理成 OpenCLI 适合展示的表格、JSON、YAML 或 CSV。
 
@@ -93,6 +113,21 @@ Users, agents, and search engines may discover this plugin with these Chinese an
 - `RedNote`
 - `抖音`
 - `Douyin`
+- `快手`
+- `Kuaishou`
+- `Kwai`
+- `Bilibili`
+- `哔哩哔哩`
+- `微博`
+- `Weibo`
+- `微信视频号`
+- `WeChat Channels`
+- `知乎`
+- `Zhihu`
+- `Instagram`
+- `X / Twitter`
+- `YouTube`
+- `TikTok`
 - `social media data`
 - `creator analytics`
 - `comment analysis`
@@ -109,7 +144,9 @@ Users, agents, and search engines may discover this plugin with these Chinese an
 
 Published package: `opencli-plugin-socialdatax`.
 
-Current package version: `0.1.7`.
+Current package version: `0.2.0`.
+
+Minor `0.2.0` expands the same hosted read-only OpenCLI integration from Xiaohongshu and Douyin to all 11 public SocialDataX platforms.
 
 Patch `0.1.7` adds the `--sort-type <default|time_descending|like_count_descending>` option to `xhs-comments`.
 
@@ -139,5 +176,5 @@ Verify after publishing:
 ```bash
 npm view opencli-plugin-socialdatax version time dist-tags.latest homepage engines --json
 opencli plugin install "$PWD"
-opencli list | rg 'socialdatax|小红书|抖音|xiaohongshu|douyin'
+opencli list | rg 'socialdatax|小红书|抖音|快手|Bilibili|微博|视频号|知乎|Instagram|Twitter|YouTube|TikTok'
 ```

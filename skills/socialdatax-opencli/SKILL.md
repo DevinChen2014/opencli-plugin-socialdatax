@@ -1,6 +1,6 @@
 ---
 name: socialdatax-opencli
-description: Use SocialDataX / 社媒数据助手 through OpenCLI for read-only 小红书 / Xiaohongshu / XHS / RedNote and 抖音 / Douyin social data workflows including search, hot search, details, comments, creator profiles, creator posts, and creator short-drama series.
+description: Use SocialDataX / 社媒数据助手 through OpenCLI for read-only search, hot-list, content, comment, and creator research across 11 public social platforms.
 metadata:
   opencli:
     requires:
@@ -16,7 +16,7 @@ metadata:
 
 # SocialDataX OpenCLI
 
-Use this skill when the user asks to use OpenCLI for SocialDataX / 社媒数据助手, 小红书 / Xiaohongshu / XHS / RedNote, or 抖音 / Douyin read-only data workflows.
+Use this skill when the user asks to use OpenCLI for SocialDataX / 社媒数据助手 read-only data workflows across 小红书 / Xiaohongshu / XHS / RedNote, 抖音 / Douyin, 快手 / Kuaishou / Kwai, Bilibili, 微博 / Weibo, 微信视频号 / WeChat Channels, 知乎 / Zhihu, Instagram, X / Twitter, YouTube, or TikTok.
 
 ## API Key
 
@@ -44,7 +44,25 @@ opencli socialdatax douyin-replies --aweme-id "<aweme_id>" --comment-id "<commen
 opencli socialdatax douyin-user-info --sec-user-id "<sec_user_id>" -f json
 opencli socialdatax douyin-user-posts --sec-user-id "<sec_user_id>" -f table
 opencli socialdatax douyin-user-series --sec-user-id "<sec_user_id>" -f table
+
+opencli socialdatax kuaishou-search --keyword "<keyword>" -f json
+opencli socialdatax bilibili-search-videos --keyword "<keyword>" -f json
+opencli socialdatax weibo-hot-search -f table
+opencli socialdatax wechat-search --keyword "<keyword>" -f json
+opencli socialdatax zhihu-hot-list -f table
+opencli socialdatax instagram-search --keyword "<keyword>" -f json
+opencli socialdatax x-search --keyword "<keyword>" -f json
+opencli socialdatax youtube-search --keyword "<keyword>" -f json
+opencli socialdatax tiktok-search --keyword "<keyword>" -f json
 ```
+
+Choose the platform command family that matches the request:
+
+- `xhs-*`, `douyin-*`, `kuaishou-*`, `weibo-*`, `wechat-*`, and `zhihu-*` include platform hot-list commands where available.
+- `bilibili-*` separates video and article search and also covers reactions, creator videos, articles, and dynamics.
+- `zhihu-*`, `instagram-*`, `x-*`, and `tiktok-*` cover search, detail, comments/replies, and creator data.
+- `youtube-*` covers video search/detail/comments/replies plus channel profile and channel videos/Shorts.
+- `wechat-article` reads WeChat Official Account article details and body text from an article URL.
 
 If the OpenCLI plugin is not installed, fall back to the direct CLI:
 
@@ -52,6 +70,15 @@ If the OpenCLI plugin is not installed, fall back to the direct CLI:
 npx -y socialdatax-skills@latest xhs search --keyword "<keyword>" --pretty
 npx -y socialdatax-skills@latest xhs hot-search --pretty
 npx -y socialdatax-skills@latest douyin search --keyword "<keyword>" --pretty
+npx -y socialdatax-skills@latest kuaishou search --keyword "<keyword>" --pretty
+npx -y socialdatax-skills@latest bilibili search-videos --keyword "<keyword>" --pretty
+npx -y socialdatax-skills@latest weibo search --keyword "<keyword>" --pretty
+npx -y socialdatax-skills@latest wechat search --keyword "<keyword>" --pretty
+npx -y socialdatax-skills@latest zhihu search --keyword "<keyword>" --pretty
+npx -y socialdatax-skills@latest instagram search --keyword "<keyword>" --pretty
+npx -y socialdatax-skills@latest x search --keyword "<keyword>" --pretty
+npx -y socialdatax-skills@latest youtube search --keyword "<keyword>" --pretty
+npx -y socialdatax-skills@latest tiktok search --keyword "<keyword>" --pretty
 ```
 
 Set `SOCIALDATAX_API_KEY` before data calls. This skill is read-only: do not use it for login, posting, liking, commenting, following, editing, deleting, or other account actions.
@@ -62,6 +89,8 @@ For XHS `note_id`, copy the entire returned `note_id` exactly. Do not truncate, 
 
 For commands that accept `--page-token`, continue only with the complete returned `next_page_token` from the same pagination chain. Do not modify, truncate, redact, mask, omit, normalize, rebuild, generate, or replace the middle with ellipses.
 
+If a source page has no items but still returns a non-empty `next_page_token`, OpenCLI returns a metadata-only row so the same pagination chain can continue.
+
 For XHS comments, `--sort-type` accepts `default`, `time_descending`, or `like_count_descending`; omit it for the platform default comment order.
 
-OpenCLI's built-in `xiaohongshu` adapter is browser-session based. `opencli socialdatax ...` is API Key based hosted data access and covers both 小红书 / Xiaohongshu / XHS / RedNote and 抖音 / Douyin.
+OpenCLI's built-in browser-session adapters and `opencli socialdatax ...` serve different workflows. SocialDataX uses API Key based hosted read-only data access and does not read local browser sessions.
